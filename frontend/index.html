@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SICO - Painel Principal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-body">
+
+    <header class="main-header">
+        <div class="sico-logo">
+            SICO
+        </div>
+        <div class="header-actions">
+            <button id="btn-nova-ocorrencia" class="btn btn-primary">Criar Ocorrência</button>
+            <button id="btn-logout" class="btn btn-secondary">Sair</button>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <h2>Ocorrências Registradas</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Protocolo</th>
+                        <th>Data</th>
+                        <th>Motivo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="ocorrencias-tabela-corpo">
+                    <tr>
+                        <td colspan="4" class="empty-message">Nenhuma ocorrência encontrada.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    
+    <div id="modal-ocorrencia" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            
+            <div id="selecao-tipo">
+                <h2>Selecione o Tipo de Ocorrência</h2>
+                <button class="btn btn-primary btn-tipo" data-tipo="Cancelamento de Partidas">Cancelamento de Partidas</button>
+                <button class="btn btn-primary btn-tipo" data-tipo="Atrasos de Partida">Atrasos de Partida</button>
+                <button class="btn btn-primary btn-tipo" data-tipo="Desvio de Itinerário">Desvio de Itinerário</button>
+            </div>
+
+            <div id="formulario-container" style="display: none;">
+                </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
