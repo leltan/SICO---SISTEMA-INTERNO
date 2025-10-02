@@ -4,13 +4,20 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000; // MUDANÇA 1: Porta dinâmica
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-// MUDANÇA 2: Servindo os arquivos do frontend
+// --- ORDEM CORRIGIDA ---
+// REGRA 1 (ESPECÍFICA): Se pedirem a página inicial, entregue o login.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'frontend', 'login.html'));
+});
+
+// REGRA 2 (GERAL): Para qualquer outro pedido, procure na pasta frontend.
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
+
 
 const dbPath = path.resolve(__dirname, 'db', 'database.db');
 const db = new sqlite3.Database(dbPath, (err) => {
@@ -25,8 +32,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
         )`);
     }
 });
-
-// ... (todas as suas rotas de login e ocorrências continuam aqui, sem alterações) ...
 
 function gerarProtocolo(callback) {
     const ano = new Date().getFullYear();
@@ -94,10 +99,6 @@ app.delete('/ocorrencias/:id', (req, res) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: 'Ocorrência excluída com sucesso' });
     });
-});
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'login.html'));
 });
 
 app.listen(PORT, () => {
