@@ -15,7 +15,7 @@ function setupLoginForm() {
         const password = document.getElementById('password').value;
         document.getElementById('error-message').textContent = '';
         try {
-            const response = await fetch('http://localhost:3000/login', {
+            const response = await fetch('/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
@@ -34,27 +34,21 @@ function setupLoginForm() {
 
 function setupDashboard() {
     carregarOcorrencias();
-
     document.getElementById('btn-logout').addEventListener('click', () => {
         window.location.href = 'login.html';
     });
-
     const modal = document.getElementById('modal-ocorrencia');
     const btnNovaOcorrencia = document.getElementById('btn-nova-ocorrencia');
     const closeBtn = document.querySelector('.modal-close-btn');
-
     btnNovaOcorrencia.addEventListener('click', () => {
         resetModal();
         modal.style.display = 'flex';
     });
-
     closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
     window.addEventListener('click', (event) => { if (event.target === modal) { modal.style.display = 'none'; } });
-
     document.querySelectorAll('.btn-tipo').forEach(button => {
         button.addEventListener('click', () => { mostrarFormulario(button.getAttribute('data-tipo')); });
     });
-
     document.getElementById('ocorrencias-tabela-corpo').addEventListener('click', (event) => {
         if (event.target.classList.contains('protocolo-link')) {
             event.preventDefault();
@@ -72,7 +66,7 @@ function setupDashboard() {
 async function carregarOcorrencias() {
     const tabelaCorpo = document.getElementById('ocorrencias-tabela-corpo');
     try {
-        const response = await fetch('http://localhost:3000/ocorrencias');
+        const response = await fetch('/ocorrencias');
         const ocorrencias = await response.json();
         tabelaCorpo.innerHTML = '';
         if (ocorrencias.length === 0) {
@@ -109,10 +103,8 @@ function mostrarFormulario(tipo, dados = {}) {
     document.getElementById('selecao-tipo').style.display = 'none';
     const formContainer = document.getElementById('formulario-container');
     formContainer.style.display = 'block';
-
     const isEditing = Object.keys(dados).length > 0;
     const tipoOcorrencia = isEditing ? dados.tipo_ocorrencia : tipo;
-
     let formHTML = `<h2>${isEditing ? 'Editar Ocorrência' : tipoOcorrencia}</h2><form id="form-ocorrencia" class="form-grid">`;
     formHTML += `
         <div class="form-group"><label>Data de Início</label><input type="date" id="data_inicio" value="${dados.data_inicio || ''}" required></div>
@@ -121,7 +113,6 @@ function mostrarFormulario(tipo, dados = {}) {
         <div class="form-group"><label>Hora de Término</label><input type="time" id="hora_termino" value="${dados.hora_termino || ''}" required></div>
         <div class="form-group"><label>Prefixo</label><input type="text" id="prefixo" value="${dados.prefixo || ''}" required></div>
         <div class="form-group"><label>Local</label><input type="text" id="local" value="${dados.local || ''}" required></div>`;
-
     if (tipoOcorrencia === 'Cancelamento de Partidas') {
         formHTML += `<div class="form-group full-width"><label>Motivo</label><select id="motivo" required><option value="">Selecione...</option><option value="Falta de operador">Falta de operador</option><option value="Congestionamento">Congestionamento</option><option value="Falha mecânica">Falha mecânica</option></select></div>
                      <div class="form-group full-width"><label>Providência</label><select id="providencia"><option value="">Selecione...</option><option value="Reassumiu">Reassumiu</option><option value="Foi substituído">Foi substituído</option><option value="Não houve providência">Não houve providência</option><option value="Termino de tabela">Termino de tabela</option></select></div>
@@ -142,12 +133,9 @@ function mostrarFormulario(tipo, dados = {}) {
                      <div class="form-group full-width"><label>Desvio Realizado</label><textarea id="desvio_realizado" required></textarea></div>
                      <div class="form-group full-width"><label>Qtd. de Pontos Perdidos</label><input type="number" id="pontos_perdidos" required></div>`;
     }
-    
     formHTML += `<div id="detalhe-falha-container" class="form-group full-width" style="display:none;"><label>Especifique a Falha Mecânica</label><input type="text" id="detalhe_falha"></div>
                  <div class="form-group full-width"><button type="submit" class="btn btn-primary">${isEditing ? 'Atualizar' : 'Salvar'}</button></div></form>`;
     formContainer.innerHTML = formHTML;
-
-    // Preencher dados na edição
     if (isEditing) {
         ['motivo', 'providencia', 'itinerario', 'desvio_realizado', 'pontos_perdidos'].forEach(id => {
             if (document.getElementById(id) && dados[id]) document.getElementById(id).value = dados[id];
@@ -161,8 +149,6 @@ function mostrarFormulario(tipo, dados = {}) {
             document.querySelector(`input[name="providencia_sentido_sub"][value="${dados.providencia_sentido}"]`).checked = true;
         }
     }
-
-    // Lógicas de exibição condicional e eventos
     const motivoSelect = document.getElementById('motivo');
     if (motivoSelect) {
         motivoSelect.addEventListener('change', () => { document.getElementById('detalhe-falha-container').style.display = motivoSelect.value === 'Falha mecânica' ? 'flex' : 'none'; });
@@ -185,7 +171,7 @@ function mostrarFormulario(tipo, dados = {}) {
 async function salvarOcorrencia(tipo) {
     const dados = { tipo_ocorrencia: tipo, ...getDadosDoForm() };
     try {
-        const response = await fetch('http://localhost:3000/ocorrencias', {
+        const response = await fetch('/ocorrencias', {
             method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados)
         });
         if (!response.ok) throw new Error('Falha ao salvar ocorrência.');
@@ -198,7 +184,7 @@ async function salvarOcorrencia(tipo) {
 async function atualizarOcorrencia(id) {
     const dados = getDadosDoForm();
     try {
-        const response = await fetch(`http://localhost:3000/ocorrencias/${id}`, {
+        const response = await fetch(`/ocorrencias/${id}`, {
             method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados)
         });
         if (!response.ok) throw new Error('Falha ao atualizar a ocorrência.');
@@ -233,7 +219,7 @@ function getDadosDoForm() {
 async function excluirOcorrencia(id) {
     if (!confirm('Tem certeza?')) return;
     try {
-        const response = await fetch(`http://localhost:3000/ocorrencias/${id}`, { method: 'DELETE' });
+        const response = await fetch(`/ocorrencias/${id}`, { method: 'DELETE' });
         if (!response.ok) throw new Error('Falha ao excluir.');
         alert('Ocorrência excluída!');
         carregarOcorrencias();
@@ -242,7 +228,7 @@ async function excluirOcorrencia(id) {
 
 async function abrirEdicaoOcorrencia(id) {
     try {
-        const response = await fetch(`http://localhost:3000/ocorrencias/${id}`);
+        const response = await fetch(`/ocorrencias/${id}`);
         if (!response.ok) throw new Error('Não foi possível carregar os dados para edição.');
         const dados = await response.json();
         resetModal();
@@ -253,10 +239,9 @@ async function abrirEdicaoOcorrencia(id) {
 
 async function abrirVisualizacao(id) {
     try {
-        const response = await fetch(`http://localhost:3000/ocorrencias/${id}`);
+        const response = await fetch(`/ocorrencias/${id}`);
         if (!response.ok) throw new Error('Não foi possível carregar os dados.');
         const dados = await response.json();
-        
         const formContainer = document.getElementById('formulario-container');
         let viewHTML = `<h2>Detalhes da Ocorrência</h2><div class="view-mode-grid">`;
         const campos = {
@@ -272,7 +257,6 @@ async function abrirVisualizacao(id) {
             }
         }
         viewHTML += `</div>`;
-        
         resetModal();
         document.getElementById('selecao-tipo').style.display = 'none';
         formContainer.innerHTML = viewHTML;
