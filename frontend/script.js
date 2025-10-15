@@ -242,6 +242,7 @@ async function abrirVisualizacao(id) {
         const response = await fetch(`/ocorrencias/${id}`);
         if (!response.ok) throw new Error('Não foi possível carregar os dados.');
         const dados = await response.json();
+        
         const formContainer = document.getElementById('formulario-container');
         let viewHTML = `<h2>Detalhes da Ocorrência</h2><div class="view-mode-grid">`;
         const campos = {
@@ -257,6 +258,7 @@ async function abrirVisualizacao(id) {
             }
         }
         viewHTML += `</div>`;
+        
         resetModal();
         document.getElementById('selecao-tipo').style.display = 'none';
         formContainer.innerHTML = viewHTML;
