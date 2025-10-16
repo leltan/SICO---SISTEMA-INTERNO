@@ -63,6 +63,78 @@ function setupDashboard() {
     });
 }
 
+
+function validarDatas() {
+    const dataInicio = document.getElementById('data_inicio').value;
+    const horaInicio = document.getElementById('hora_inicio').value;
+    const dataTermino = document.getElementById('data_termino').value;
+    const horaTermino = document.getElementById('hora_termino').value;
+
+    if (!dataInicio || !horaInicio || !dataTermino || !horaTermino) {
+        return true; 
+    }
+
+    const inicioCompleto = new Date(`${dataInicio}T${horaInicio}`);
+    const terminoCompleto = new Date(`${dataTermino}T${horaTermino}`);
+    
+    
+    if (terminoCompleto < inicioCompleto) {
+        if (!confirm("A data/hora de término é anterior à data/hora de início. Deseja salvar mesmo assim?")) {
+            return false;
+    }
+
+   
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0); 
+    const inicioData = new Date(dataInicio + 'T00:00:00');
+    if (inicioData < hoje) {
+        if (!confirm("A data de início é anterior a hoje. Deseja continuar?")) {
+            return false; 
+    }
+
+    const terminoData = new Date(dataTermino + 'T00:00:00');
+    if (terminoData < hoje) {
+        if (!confirm("A data de término é anterior a hoje. Deseja continuar?")) {
+            return false; 
+    }
+
+    return true; // 
+}
+
+async function salvarOcorrencia(tipo) {
+    if (!validarDatas()) {
+        return; 
+    }
+    const dados = { tipo_ocorrencia: tipo, ...getDadosDoForm() };
+    try {
+        const response = await fetch('/ocorrencias', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados)
+        });
+        if (!response.ok) throw new Error('Falha ao salvar ocorrência.');
+        alert('Ocorrência criada com sucesso!');
+        document.getElementById('modal-ocorrencia').style.display = 'none';
+        carregarOcorrencias();
+    } catch (error) { alert(error.message); }
+}
+
+async function atualizarOcorrencia(id) {
+    if (!validarDatas()) {
+        return; 
+    }
+    const dados = getDadosDoForm();
+    try {
+        const response = await fetch(`/ocorrencias/${id}`, {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados)
+        });
+        if (!response.ok) throw new Error('Falha ao atualizar a ocorrência.');
+        alert('Ocorrência atualizada com sucesso!');
+        document.getElementById('modal-ocorrencia').style.display = 'none';
+        carregarOcorrencias();
+    } catch (error) { alert(error.message); }
+}
+
+// ... (O restante do código, de carregarOcorrencias até o final, continua exatamente o mesmo) ...
+
 async function carregarOcorrencias() {
     const tabelaCorpo = document.getElementById('ocorrencias-tabela-corpo');
     try {
@@ -168,32 +240,6 @@ function mostrarFormulario(tipo, dados = {}) {
     });
 }
 
-async function salvarOcorrencia(tipo) {
-    const dados = { tipo_ocorrencia: tipo, ...getDadosDoForm() };
-    try {
-        const response = await fetch('/ocorrencias', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados)
-        });
-        if (!response.ok) throw new Error('Falha ao salvar ocorrência.');
-        alert('Ocorrência criada com sucesso!');
-        document.getElementById('modal-ocorrencia').style.display = 'none';
-        carregarOcorrencias();
-    } catch (error) { alert(error.message); }
-}
-
-async function atualizarOcorrencia(id) {
-    const dados = getDadosDoForm();
-    try {
-        const response = await fetch(`/ocorrencias/${id}`, {
-            method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados)
-        });
-        if (!response.ok) throw new Error('Falha ao atualizar a ocorrência.');
-        alert('Ocorrência atualizada com sucesso!');
-        document.getElementById('modal-ocorrencia').style.display = 'none';
-        carregarOcorrencias();
-    } catch (error) { alert(error.message); }
-}
-
 function getDadosDoForm() {
     const providencia = document.getElementById('providencia')?.value;
     let providenciaHorario, providenciaSentido;
@@ -242,7 +288,6 @@ async function abrirVisualizacao(id) {
         const response = await fetch(`/ocorrencias/${id}`);
         if (!response.ok) throw new Error('Não foi possível carregar os dados.');
         const dados = await response.json();
-        
         const formContainer = document.getElementById('formulario-container');
         let viewHTML = `<h2>Detalhes da Ocorrência</h2><div class="view-mode-grid">`;
         const campos = {
@@ -258,7 +303,6 @@ async function abrirVisualizacao(id) {
             }
         }
         viewHTML += `</div>`;
-        
         resetModal();
         document.getElementById('selecao-tipo').style.display = 'none';
         formContainer.innerHTML = viewHTML;
