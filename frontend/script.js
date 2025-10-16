@@ -63,7 +63,6 @@ function setupDashboard() {
     });
 }
 
-
 function validarDatas() {
     const dataInicio = document.getElementById('data_inicio').value;
     const horaInicio = document.getElementById('hora_inicio').value;
@@ -71,39 +70,41 @@ function validarDatas() {
     const horaTermino = document.getElementById('hora_termino').value;
 
     if (!dataInicio || !horaInicio || !dataTermino || !horaTermino) {
-        return true; 
+        return true;
     }
 
     const inicioCompleto = new Date(`${dataInicio}T${horaInicio}`);
     const terminoCompleto = new Date(`${dataTermino}T${horaTermino}`);
     
-    
     if (terminoCompleto < inicioCompleto) {
         if (!confirm("A data/hora de término é anterior à data/hora de início. Deseja salvar mesmo assim?")) {
             return false;
+        }
     }
 
-   
     const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0); 
+    hoje.setHours(0, 0, 0, 0);
+
     const inicioData = new Date(dataInicio + 'T00:00:00');
     if (inicioData < hoje) {
         if (!confirm("A data de início é anterior a hoje. Deseja continuar?")) {
-            return false; 
+            return false;
+        }
     }
 
     const terminoData = new Date(dataTermino + 'T00:00:00');
     if (terminoData < hoje) {
         if (!confirm("A data de término é anterior a hoje. Deseja continuar?")) {
-            return false; 
+            return false;
+        }
     }
 
-    return true; // 
+    return true;
 }
 
 async function salvarOcorrencia(tipo) {
     if (!validarDatas()) {
-        return; 
+        return;
     }
     const dados = { tipo_ocorrencia: tipo, ...getDadosDoForm() };
     try {
@@ -119,7 +120,7 @@ async function salvarOcorrencia(tipo) {
 
 async function atualizarOcorrencia(id) {
     if (!validarDatas()) {
-        return; 
+        return;
     }
     const dados = getDadosDoForm();
     try {
@@ -132,8 +133,6 @@ async function atualizarOcorrencia(id) {
         carregarOcorrencias();
     } catch (error) { alert(error.message); }
 }
-
-// ... (O restante do código, de carregarOcorrencias até o final, continua exatamente o mesmo) ...
 
 async function carregarOcorrencias() {
     const tabelaCorpo = document.getElementById('ocorrencias-tabela-corpo');
