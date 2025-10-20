@@ -1,0 +1,7 @@
+# Dependências do Node
+
+node_modules
+
+# Arquivo do Banco de Dados
+
+/backend/db/database.db
