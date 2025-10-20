@@ -239,13 +239,13 @@ tbody tr:hover {
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px 20px; 
+    gap: 15px 20px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 5px; 
+    margin-bottom: 5px;
 }
 
 .form-group.full-width {
@@ -263,7 +263,7 @@ tbody tr:hover {
     background-color: #40444b;
     color: #ffffff;
     font-size: 1rem;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
 
 .protocolo-link {
@@ -349,4 +349,50 @@ tbody tr:hover {
 }
 .modal-content::-webkit-scrollbar-thumb:hover {
     background-color: #5a6eae;
+}
+
+.filter-container {
+    background-color: #36393f;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border: 1px solid #4f545c;
+}
+
+.filter-container h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #4f545c;
+    color: #7289da;
+    font-size: 1.2rem;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px 20px;
+    align-items: end;
+}
+
+.filter-grid .form-group {
+    margin-bottom: 0;
+}
+
+.filter-grid label {
+    font-size: 0.85rem;
+    font-weight: normal;
+}
+
+.filter-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.filter-actions .btn {
+    width: auto;
+    padding: 8px 15px;
 }
