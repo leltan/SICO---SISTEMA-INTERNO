@@ -19,6 +19,41 @@
     </header>
 
     <main class="main-container">
+
+        <div class="filter-container card-custom">
+            <h3>Filtrar Ocorrências</h3>
+            <form id="filter-form" class="filter-grid">
+                <div class="form-group">
+                    <label for="filtro-protocolo">Protocolo</label>
+                    <input type="text" id="filtro-protocolo" placeholder="Ex: 00123/2025">
+                </div>
+                <div class="form-group">
+                    <label for="filtro-data-inicio">Data Início (De)</label>
+                    <input type="date" id="filtro-data-inicio">
+                </div>
+                <div class="form-group">
+                    <label for="filtro-data-termino">Data Início (Até)</label>
+                    <input type="date" id="filtro-data-termino">
+                </div>
+                 <div class="form-group">
+                    <label for="filtro-prefixo">Prefixo</label>
+                    <input type="text" id="filtro-prefixo" placeholder="Ex: 11222">
+                </div>
+                 <div class="form-group">
+                    <label for="filtro-motivo">Motivo</label>
+                    <input type="text" id="filtro-motivo" placeholder="Ex: Congestionamento">
+                </div>
+                 <div class="form-group">
+                    <label for="filtro-palavra-chave">Palavra-Chave</label>
+                    <input type="text" id="filtro-palavra-chave" placeholder="Buscar em detalhes...">
+                </div>
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                    <button type="button" id="btn-limpar-filtros" class="btn btn-secondary">Limpar</button>
+                </div>
+            </form>
+        </div>
+
         <h2>Ocorrências Registradas</h2>
         <div class="table-container">
             <table>
@@ -54,9 +89,9 @@
                 <button class="btn btn-primary btn-tipo" data-tipo="Roubo">Roubo</button>
                 <button class="btn btn-primary btn-tipo" data-tipo="Acidente com Usuário">Acidente com Usuário</button>
             </div>
-
+            
             <div id="formulario-container" style="display: none;">
-                </div>
+            </div>
         </div>
     </div>
 
