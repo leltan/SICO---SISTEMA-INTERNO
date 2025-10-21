@@ -298,6 +298,34 @@ function mostrarFormulario(tipo, dados = {}) {
     });
 }
 
+async function salvarOcorrencia(tipo) {
+    if (!validarDatas()) { return; }
+    const dados = { tipo_ocorrencia: tipo, ...getDadosDoForm() };
+    try {
+        const response = await fetch('/ocorrencias', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados)
+        });
+        if (!response.ok) throw new Error('Falha ao salvar ocorrência.');
+        alert('Ocorrência criada com sucesso!');
+        document.getElementById('modal-ocorrencia').style.display = 'none';
+        carregarOcorrencias();
+    } catch (error) { alert(error.message); }
+}
+
+async function atualizarOcorrencia(id) {
+    if (!validarDatas()) { return; }
+    const dados = getDadosDoForm();
+    try {
+        const response = await fetch(`/ocorrencias/${id}`, {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados)
+        });
+        if (!response.ok) throw new Error('Falha ao atualizar a ocorrência.');
+        alert('Ocorrência atualizada com sucesso!');
+        document.getElementById('modal-ocorrencia').style.display = 'none';
+        carregarOcorrencias();
+    } catch (error) { alert(error.message); }
+}
+
 function getDadosDoForm() {
     const dados = {};
     const form = document.getElementById('form-ocorrencia');
