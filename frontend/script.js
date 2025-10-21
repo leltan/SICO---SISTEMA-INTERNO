@@ -309,7 +309,7 @@ function getDadosDoForm() {
                 if (el.checked) { dados[el.name] = el.value; }
             } else { dados[el.id] = el.value; }
         } else if (el.type === 'radio' && el.name && el.checked) {
-             dados[el.name] = el.value; // Pega radios pelo nome se não tiver ID
+             dados[el.name] = el.value;
         }
     });
 
