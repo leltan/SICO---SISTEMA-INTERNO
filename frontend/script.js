@@ -30,6 +30,52 @@ function setupLoginForm() {
 function setupDashboard() {
     carregarOcorrencias();
     document.getElementById('btn-logout').addEventListener('click', () => { window.location.href = 'login.html'; });
+    
+    document.getElementById('btn-exportar')?.addEventListener('click', async () => {
+        try {
+            const response = await fetch('/ocorrencias');
+            const dados = await response.json();
+            
+            if (dados.length === 0) {
+                alert("Não há dados para exportar.");
+                return;
+            }
+
+            let csvContent = "\uFEFF"; 
+            csvContent += "Protocolo;Tipo;Data Inicio;Hora Inicio;Motivo;Local;Prefixo;Historico\n";
+
+            dados.forEach(item => {
+                const historicoLimpo = (item.historico || "").replace(/(\r\n|\n|\r)/gm, " ");
+                const localLimpo = (item.local || "").replace(/(\r\n|\n|\r)/gm, " ");
+                
+                let row = [
+                    item.protocolo,
+                    item.tipo_ocorrencia,
+                    item.data_inicio,
+                    item.hora_inicio,
+                    item.motivo,
+                    localLimpo,
+                    item.prefixo,
+                    historicoLimpo
+                ].join(";");
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "relatorio_sico_" + new Date().toISOString().slice(0,10) + ".csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+        } catch (error) {
+            console.error("Erro ao exportar:", error);
+            alert("Erro ao gerar o arquivo.");
+        }
+    });
+    // --- FIM LÓGICA EXPORTAR ---
+
     const modal = document.getElementById('modal-ocorrencia');
     const btnNovaOcorrencia = document.getElementById('btn-nova-ocorrencia');
     const closeBtn = document.querySelector('.modal-close-btn');
