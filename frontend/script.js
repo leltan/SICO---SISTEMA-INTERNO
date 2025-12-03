@@ -30,7 +30,11 @@ function setupLoginForm() {
 function setupDashboard() {
     carregarOcorrencias();
     document.getElementById('btn-logout').addEventListener('click', () => { window.location.href = 'login.html'; });
+    const modal = document.getElementById('modal-ocorrencia');
+    const btnNovaOcorrencia = document.getElementById('btn-nova-ocorrencia');
+    const closeBtn = document.querySelector('.modal-close-btn');
     
+   
     document.getElementById('btn-exportar')?.addEventListener('click', async () => {
         try {
             const response = await fetch('/ocorrencias');
@@ -41,22 +45,41 @@ function setupDashboard() {
                 return;
             }
 
+            
             let csvContent = "\uFEFF"; 
-            csvContent += "Protocolo;Tipo;Data Inicio;Hora Inicio;Motivo;Local;Prefixo;Historico\n";
+            csvContent += "Protocolo;Tipo;Data Inicio;Hora Inicio;Data Termino;Hora Termino;Local;Prefixo;Empresa;Linha;Motivo;Detalhe Falha;Historico;Condutor;RE Mot;CCO;Obs;Providencia;Prov. Horario;Prov. Sentido;Veic. Subst.;BO PM;BO Civil;Vitimas;Obito;Informado Por\n";
 
             dados.forEach(item => {
-                const historicoLimpo = (item.historico || "").replace(/(\r\n|\n|\r)/gm, " ");
-                const localLimpo = (item.local || "").replace(/(\r\n|\n|\r)/gm, " ");
                 
+                const clean = (text) => (text || "").toString().replace(/(\r\n|\n|\r)/gm, " ").replace(/;/g, ",");
+
                 let row = [
-                    item.protocolo,
-                    item.tipo_ocorrencia,
-                    item.data_inicio,
-                    item.hora_inicio,
-                    item.motivo,
-                    localLimpo,
-                    item.prefixo,
-                    historicoLimpo
+                    clean(item.protocolo),
+                    clean(item.tipo_ocorrencia),
+                    clean(item.data_inicio),
+                    clean(item.hora_inicio),
+                    clean(item.data_termino),
+                    clean(item.hora_termino),
+                    clean(item.local),
+                    clean(item.prefixo),
+                    clean(item.empresa),
+                    clean(item.linha),
+                    clean(item.motivo),
+                    clean(item.detalhe_falha),
+                    clean(item.historico),        
+                    clean(item.condutor_nome_re || item.nome_motorista), 
+                    clean(item.re_mot),
+                    clean(item.cco_nome_re),
+                    clean(item.observacao),
+                    clean(item.providencia),
+                    clean(item.providencia_horario),
+                    clean(item.providencia_sentido),
+                    clean(item.providencia_veiculo_substituto),
+                    clean(item.bo_pm_numero),
+                    clean(item.bo_civil_numero),
+                    clean(item.nome_vitima || item.vitimas_descricao), 
+                    clean(item.obito),
+                    clean(item.controle_informado_por)
                 ].join(";");
                 csvContent += row + "\n";
             });
@@ -64,7 +87,7 @@ function setupDashboard() {
             const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "relatorio_sico_" + new Date().toISOString().slice(0,10) + ".csv");
+            link.setAttribute("download", "SICO_Completo_" + new Date().toISOString().slice(0,10) + ".csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -74,11 +97,7 @@ function setupDashboard() {
             alert("Erro ao gerar o arquivo.");
         }
     });
-    // --- FIM LÓGICA EXPORTAR ---
 
-    const modal = document.getElementById('modal-ocorrencia');
-    const btnNovaOcorrencia = document.getElementById('btn-nova-ocorrencia');
-    const closeBtn = document.querySelector('.modal-close-btn');
     btnNovaOcorrencia.addEventListener('click', () => { resetModal(); modal.style.display = 'flex'; });
     closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
     window.addEventListener('click', (event) => { if (event.target === modal) { modal.style.display = 'none'; } });
